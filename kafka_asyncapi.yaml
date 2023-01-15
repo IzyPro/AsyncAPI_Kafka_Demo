@@ -1,0 +1,71 @@
+asyncapi: '2.5.0'
+
+info:
+  title: AsyncAPI_Kafka Demo API
+  version: '1.0.0'
+  description: |
+    A demo NestJS application demonstrating:
+    * Creating producer and consumers with kafka
+    * Describing the API with AsyncAPI
+    * Documenting it with Bump.sh
+  contact:
+    name: Some Name
+    email: someemail@email.com
+    url: https://someurl.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  production:
+    url: http://localhost:3000
+    protocol: kafka
+    description: Sample Kafka Server
+  test:
+    url: http://localhost:3000
+    protocol: kafka
+    description: Sample Kafka Server
+  staging:
+    url: https://stag.localhost:3000
+    protocol: kafka-secure
+    description: Sample staging environment
+    
+defaultContentType: application/json
+
+channels:
+  broadcast:
+    description: This topic receives some sample data.
+    subscribe:
+      operationId: broadcastOperation
+      description: A sample description
+      summary: Subscribe to this channel to receive a predefined json data
+      bindings:
+        kafka:
+          groupId:
+            type: string
+      message:
+        $ref: '#/components/messages/broadcast'
+  
+components:
+  messages:
+    broadcast:
+      name: Broadcast
+      title: Broadcast Response
+      summary: Receives a sample JSON data from channel 'broadcast'
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/broadcastPayload"
+    
+  schemas:
+    broadcastPayload:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Success or failure
+        message:
+          type: string
+          description: Message
+        count:
+          type: integer
+          description: sample integer
